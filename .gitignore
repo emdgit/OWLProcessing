@@ -1,0 +1,8 @@
+tools/*
+templates/*
+modes/*
+libraries/*
+examples/*
+
+*.directory
+~*
