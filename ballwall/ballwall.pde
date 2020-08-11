@@ -7,7 +7,7 @@ int H = 500;
 int w = 50;  // box width
 
 void setup() {
-  size(800, 800, OPENGL);
+  size(800, 800, P3D);
   W = 800;
   H = 800;
 }
@@ -37,4 +37,14 @@ void draw() {
 
   angle += 0.1;
   
+}
+
+void keyPressed() {
+  switch (key) {
+    case UP: {}
+    case DOWN: {}
+    case LEFT: {}
+    case RIGHT: {}
+    case VK_NUMPAD3: {}
+  }
 }
