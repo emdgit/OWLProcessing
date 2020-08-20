@@ -6,3 +6,4 @@ examples/*
 
 *.directory
 ~*
+*.ini
