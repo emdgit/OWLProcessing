@@ -1,10 +1,11 @@
 public final class Rect {
-  private float x_, y_;  // topleft coords
-  private float w_, h_;  // width and height
+  private float x, y;  // topleft coords
+  private float w, h;  // width and height
+  public Rect() {}
   public Rect(float x, float y, float w, float h) {
-    x_ = x;
-    y_ = y;
-    w_ = w;
-    h_ = h;
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
   }
 }
