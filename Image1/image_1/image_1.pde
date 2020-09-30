@@ -1,16 +1,16 @@
 static final String file = "Cage.jpg";
 
 PImage imgOrig;  // original
-PImage imgCust;  // custom
+Point origCoord; // TopLeft coords of orig rect
+Grid grid;
 
-ActorBase actor1;
+ActorBase rectPainter;
+ActorBase gridMaker;
+ActorBase gridPainter;
 
 Rect origRect() {
-  return new Rect(0, 0, width / 2, height);
-}
-
-Rect customRect() {
-  return new Rect(width / 2, 0, width / 2, height);
+  //return new Rect(0, 0, width, height);
+  return new Rect(0, 0, 300, 300);
 }
 
 Rect fitImageToRect(PImage img, Rect rect) {
@@ -31,50 +31,50 @@ Rect fitImageToRect(PImage img, Rect rect) {
 }
 
 void setup() {
-  size(1200, 600);
-  frameRate(60);
+  size(800, 400);
+  int step = 20;
+  int cellRectWidth = 5;
+  
   imgOrig = loadImage(file);
-  imgCust = loadImage(file);
-  imgCust.filter(GRAY);
-  
   Rect fr = fitImageToRect(imgOrig, origRect());
+  imgOrig.resize((int)fr.w, (int)fr.h);
+  origCoord = new Point((int)fr.x, (int)fr.y);
+  grid = new Grid();
   
-  actor1 = new ActorRectPainter(fr,
-                                (int)(fr.x + 20), (int)(fr.y + 20), 
-                                20, 5, 
-                                1);
+  rectPainter = new ActorRectPainter(fr, step, cellRectWidth, 1);
+  gridMaker = new GridMaker(imgOrig, origCoord, grid, step, cellRectWidth);
+  gridPainter = new GridPainter(grid);
   
+  // resize image
   float w = imgOrig.width;
   float h = imgOrig.height;
   float dw = w / (width / 2);
   float dh = h / height;
+  
   if (dw <= 1 && dh <= 1) {
     return;
   }
-  int s = imgCust.pixelHeight * imgCust.pixelWidth;
-
-  for(int i = 0; i < s; ++i) {
-    int c = imgCust.pixels[i]; 
-    int r=(c&0x00FF0000)>>16; // red part
-    int g=(c&0x0000FF00)>>8; // green part
-    int b=(c&0x000000FF); // blue part
-    int grey=(r+b+g)/3;
-
-    if (grey > 255 / 3) {
-      imgCust.pixels[i] = color(255, 0, 0);
-    }
-  }
 }
 
-void drawImage(PImage img, Rect rect) {
-  Rect r = fitImageToRect(img, rect);
-  image(img, r.x, r.y, r.w, r.h);
+void drawImage(PImage img, Point p) {
+  image(img, p.x, p.y);
 }
 
 void draw() {
   background(100);
-  drawImage(imgOrig, origRect());
-  //drawImage(imgCust, customRect());
   
-  actor1.work();
+  if (rectPainter.isRunning()) {
+    drawImage(imgOrig, origCoord);
+  
+    rectPainter.work();
+  }
+  else {
+    if (gridMaker.isRunning()) {
+      gridMaker.work();
+    }
+    else {
+      gridPainter.work();
+    }
+  }
+    
 }
