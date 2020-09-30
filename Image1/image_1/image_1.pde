@@ -9,8 +9,8 @@ ActorBase gridMaker;
 ActorBase gridPainter;
 
 Rect origRect() {
-  //return new Rect(0, 0, width, height);
-  return new Rect(0, 0, 300, 300);
+  return new Rect(0, 0, width, height);
+  //return new Rect(0, 0, 300, 300);
 }
 
 Rect fitImageToRect(PImage img, Rect rect) {
@@ -32,8 +32,8 @@ Rect fitImageToRect(PImage img, Rect rect) {
 
 void setup() {
   size(800, 400);
-  int step = 20;
-  int cellRectWidth = 5;
+  int step = 30;
+  int cellRectWidth = 10;
   
   imgOrig = loadImage(file);
   Rect fr = fitImageToRect(imgOrig, origRect());

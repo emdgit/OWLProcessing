@@ -42,7 +42,6 @@ public class ActorRectPainter extends ActorBase {
   public final void work() {
     stroke(255, 255, 255, 50);
     fill(255, 255, 255, 50);
-    rectMode(CENTER);
       
     if (!this.isRunning()) {
       return;
@@ -55,18 +54,18 @@ public class ActorRectPainter extends ActorBase {
     rect(i, j, rectWidth, rectWidth);
     paintedRects.add(new Point(i, j));
       
-    if (j + step >= border.h + border.y) {
+    if (j + step + 2 * rectWidth > border.h + border.y) {
       j = step + (int)border.y;
-      if (i + step >= border.w + border.x) {
+      if (i + step + 2 * rectWidth >border.w + border.x) {
         this.status = ActorStatus.Finished;
         return;
       }
       else {
-        i += step;
+        i += step + rectWidth;
       }
     }
     else {
-      j += step;
+      j += step + rectWidth;
     }
 
     ++this.framesActed;
@@ -77,6 +76,7 @@ public class ActorRectPainter extends ActorBase {
 
 
 
+// Делает 2D сетку из PImage
 public class GridMaker extends ActorBase {
   
   private final PImage img;
@@ -100,16 +100,16 @@ public class GridMaker extends ActorBase {
       return; 
     }
     
-    int w = img.width / step - (img.width % step != 0 ? 0 : 1); //<>//
-    int h = img.height / step - (img.height % step != 0 ? 0 : 1);
+    int w = img.width / (step + rw);
+    int h = img.height / (step + rw);
     
     grid.initGrid(h, w);
     
     for (int i = 0; i < w; ++i) {  // columns
       for (int j = 0; j < h; ++j) {  // rows
         // topleft cell coords
-        int x = step + step * i - rw / 2 + topLeft.x;
-        int y = step + step * j - rw / 2 + topLeft.y;
+        int x = step + i * step + i * rw + topLeft.x;
+        int y = step + j * step + j * rw + topLeft.y;
         
         PImage cellImg = new PImage(rw, rw);
         grid.setImage(cellImg, j, i, x, y);
@@ -123,9 +123,19 @@ public class GridMaker extends ActorBase {
 }
 
 
+
+
+
+
+public enum GPState { Starting, Moving, Finishing }
+
 public class GridPainter extends ActorBase {
   
-  private final Grid grid;
+  private final Grid  grid;
+  private GPState     state           = GPState.Starting;
+  private Point       origPoint[][];
+  private int         moveSteps       = 50;
+  private int         moveSteps_i     = 1;
   
   GridPainter(Grid g) { 
     super(1);
@@ -134,15 +144,85 @@ public class GridPainter extends ActorBase {
   }
   
   public final void work() {
+    switch (state) {
+      case Starting:
+        onStarting();
+        state = GPState.Moving;
+        break;
+      case Moving:
+        if (onMoving()) {
+          state = GPState.Finishing;
+        }
+        break;
+      case Finishing:
+        onFinish();
+        break;
+      default: break;
+    }
     
-    for (int i = 0; i < grid.columns; ++i) {
-      for (int j = 0; j < grid.rows; ++j) {
+    this.status = ActorStatus.Finished;
+  }
+  
+  protected void onStarting() {
+    final int r = grid.rows;
+    final int c = grid.columns;
+    
+    origPoint = new Point[grid.rows][grid.columns];
+    
+    for (int i = 0; i < c; ++i) {
+      for (int j = 0; j < r; ++j) { //<>//
+        origPoint[j][i] = grid.image(j, i).p;
+      }
+    }
+    
+    drawGrid();
+  }
+
+  // Вернет true, если фаза закончила работу
+  protected boolean onMoving() {
+    if (moveSteps_i > moveSteps) {
+      return true;
+    }
+    
+    final int r = grid.rows;
+    final int c = grid.columns;
+    final int rw = grid.image(0, 0).img.width;  // Ширина ячейки
+    final int fr_w = c * rw;                    // Ширина финального прямоугольника
+    final int fr_h = r * rw;                    // Высота финального прямоугольника
+    final int fr_x = width / 2 - fr_w / 2;
+    final int fr_y = height / 2 - fr_h / 2;
+    
+    for (int i = 0; i < c; ++i) {
+      for (int j = 0; j < r; ++j) {
+        int x1 = origPoint[j][i].x;
+        int y1 = origPoint[j][i].y;
+        int x2 = fr_x + i * rw;
+        int y2 = fr_y + j * rw;
+        grid.setX(j, i, (int)map(moveSteps_i, 1, moveSteps, x1, x2));
+        grid.setY(j, i, (int)map(moveSteps_i, 1, moveSteps, y1, y2));
+      }
+    }
+    
+    drawGrid();
+    
+    ++moveSteps_i;
+    return false;
+  }
+  
+  protected void onFinish() {
+    drawGrid();
+  }
+  
+  protected void drawGrid() {
+    final int r = grid.rows;
+    final int c = grid.columns;
+    
+    for (int i = 0; i < c; ++i) {
+      for (int j = 0; j < r; ++j) {
         PointedImage img = grid.image(j, i);
         image(img.img, img.p.x, img.p.y);
       }
     }
-    
-    this.status = ActorStatus.Finished;
   }
   
 }

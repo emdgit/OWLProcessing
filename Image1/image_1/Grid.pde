@@ -20,4 +20,12 @@ public class Grid {
     grid[r][c] = new PointedImage(img, (new Point(x, y)));
   }
   
+  public final void setX(int r, int c, int dx) {
+    grid[r][c].p.x = dx;
+  }
+  
+  public final void setY(int r, int c, int dy) {
+    grid[r][c].p.y = dy;
+  }
+  
 }
