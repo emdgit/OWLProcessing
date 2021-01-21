@@ -22,11 +22,18 @@ boolean checkIfAllUsed() {
 }
 
 void tStep() {
-  switch(movingAngle) {
-    case 0:
-      
-    break;
+  if (a == pointCount - 1) {
+    return;
   }
+  a = b; b = c; c = c + 1;
+  
+  if (c >= pointCount - 1) {
+    return;
+  }
+  
+  localT.setP1(points.get(a));
+  localT.setP2(points.get(b));
+  localT.setP3(points.get(c));
 }
 
 void setup() {
@@ -48,7 +55,7 @@ void setup() {
   points.sort(new PointNullDistanceComparator()); 
   localT = new Triangle(points.get(a), points.get(b), points.get(c));
   
-  frameRate(3);
+  frameRate(6);
 }
 
 void draw() {

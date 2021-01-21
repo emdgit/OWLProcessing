@@ -26,6 +26,12 @@ public class Point {
     return (float)Math.sqrt(x*x + y*y);
   }
   
+  public final float distanceTo(Point p) {
+    float dx = p.x - x;
+    float dy = p.y - y;
+    return (float)Math.sqrt(dx * dx + dy * dy);
+  }
+  
   public final void print() {
     System.out.println("Point(" + Float.toString(x) + ", " + Float.toString(y) + ")");
   }
