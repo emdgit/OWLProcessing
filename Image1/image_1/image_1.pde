@@ -31,8 +31,9 @@ Rect fitImageToRect(PImage img, Rect rect) {
 }
 
 void setup() {
-  size(800, 400);
-  int step = 30;
+  //size(800, 400);
+  fullScreen();
+  int step = 20;
   int cellRectWidth = 10;
   
   imgOrig = loadImage(file);
