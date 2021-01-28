@@ -4,7 +4,16 @@ abstract class IStepper {
 }
 
 class StepDrive {
-  void addStepper(IStepper st) {
+  
+  public StepDrive() {
+    steppers = new ArrayList<IStepper>();
+  }
+  
+  public final void addStepper(IStepper st) {
+    if (st == null) {
+      System.out.println("Got Null as IStepper");
+      return;
+    }
     steppers.add(st);
   }
   
