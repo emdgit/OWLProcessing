@@ -1,10 +1,10 @@
 abstract class SortStapper extends IStepper {
   
-  SortStapper(int count) {
+  SortStapper(int count, IArray arr) {
     super();
     this.count = count;
-    this.array = new int[count];
-    this.initialize();
+    this.array = arr;
+    this.array.initialize(count);
   }
   
   public final void printArray() {
@@ -19,34 +19,11 @@ abstract class SortStapper extends IStepper {
       } else {
         fill(0,0,0);
       }
-      rect(i * w, height - this.array[i], w, this.array[i]);
+      rect(i * w, height - this.array.get(i), w, this.array.get(i));
     }
   }
   
-  final void initialize() {
-    int max = height;
-    int min = (int)(height * 0.05);
-    int dh = (max - min) / count;
-    
-    // Initial fill
-    for (int i = 0; i < count; ++i) {
-      array[i] = min;
-      min += dh;
-    }
-    
-    // Shuffle
-    for (int i = 0; i < this.count; ++i) {
-      int j;
-      do {
-        j = (int)random(0, this.count);
-      } while (j == i);
-      int tmp = this.array[i];
-      this.array[i] = this.array[j];
-      this.array[j] = tmp;
-    }
-  }
-  
-  protected int array[]; 
-  protected int count;
+  protected IArray array; 
+  protected int count = 0;
   protected int current = -1; // Active value. Will be painted with red color
 }

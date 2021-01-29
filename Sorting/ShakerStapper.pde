@@ -1,7 +1,7 @@
 public class ShakerStapper extends SortStapper {
   
   public ShakerStapper(int count) {
-    super(count);
+    super(count, new MArray());
     this.current = 0;
     left = 0;
     right = count - 1;
@@ -16,10 +16,8 @@ public class ShakerStapper extends SortStapper {
     if (left < right) {
       if (direction) {
         //lastSwap = left;
-        if (array[k] > array[k+1]) {
-          int tmp = array[k];
-          array[k] = array[k+1];
-          array[k+1] = tmp;
+        if (array.get(k) > array.get(k + 1)) {
+          array.swap(k, k + 1);
           lastSwap = k + 1;
         }
         ++k;
@@ -30,10 +28,8 @@ public class ShakerStapper extends SortStapper {
         }
       } else {
         //lastSwap = right;
-        if (array[k] > array[k + 1]) {
-          int tmp = array[k];
-          array[k] = array[k+1];
-          array[k+1] = tmp;
+        if (array.get(k) > array.get(k + 1)) {
+          array.swap(k, k + 1);
           lastSwap = k;
         }
         --k;

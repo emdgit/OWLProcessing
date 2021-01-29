@@ -1,6 +1,6 @@
 public class BubbleStapper extends SortStapper {
   BubbleStapper(int count) {
-    super(count);
+    super(count, new MArray());
     this.current = 0;
   }
   
@@ -13,10 +13,8 @@ public class BubbleStapper extends SortStapper {
       return true;
     }
     
-    if (array[k] < array[k-1]) {
-      int tmp = array[k-1];
-      array[k-1] = array[k];
-      array[k] = tmp;
+    if (array.get(k) < array.get(k - 1)) {
+      array.swap(k, k - 1);
     }
     
     ++k;
